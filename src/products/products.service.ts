@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { db, Product } from './../db';
+import { v4 as uuidv4 } from 'uuid';
 
 
 @Injectable()
@@ -15,3 +16,6 @@ public getById(id: string): Product | null {
 public deleteById(id: Product['id']): void {
   db.products = db.products.filter((p) => p.id !== id);
 }
+
+return this.getProductById(id);
+  
