@@ -7,53 +7,40 @@ import {
   ParseUUIDPipe,
   NotFoundException,
   Post,
-  UseGuards,
   Body,
   Delete,
-  HttpCode,
   Put,
 } from '@nestjs/common';
 
 @Controller('products')
 export class ProductsController {
   [x: string]: any;
-  constructor(private productService: ProductsService) {}
+  constructor(private productService: ProductsService) { }
 
-  @Get()
-  
-
-  @Get(':id')
-  async getProductById(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): Promise<ExternalProductDto> {
-    const product = await this.productService.getProductById(id);
-    if (product === undefined || product === null) {
-      throw new NotFoundException();
-    }
-    return this.mapProductToExternal(product);
+  @Get('/:id')
+  getById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const prod = this.productsService.getById(id);
+    if (!prod) throw new NotFoundException('Product not found');
+    return prod;
   }
 
-  @Post()
-  @UseGuards(RoleGuard)
-  async addProduct(
-    @Body() _item_: CreateProductDto,
-  ): Promise<ExternalProductDto> {
-    return this.mapProductToExternal(
-      await this.productService.addProduct(_item_),
-    );
+  @Delete('/:id')
+  deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
+    if (!this.productsService.getById(id))
+      throw new NotFoundException('Product not found');
+    this.productsService.deleteById(id);
+    return { success: true };
+  }
+  @Put('/:id')
+  update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() productData: UpdateProductDTO,
+  ) {
+    if (!this.productsService.getById(id))
+      throw new NotFoundException('Product not found');
+
+    this.productsService.updateById(id, productData);
+    return { success: true };
   }
 
-  @Delete(':id')
-  @HttpCode(204)
-  async deleteProduct(@Param('id') _id_: string): Promise<void> {
-    return await this.productService.deleteProduct(_id_);
-  }
-
-  @Put(':id')
-  async updateProduct(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-    @Body() product: UpdateProductDto,
-  );
-
-  
 }

@@ -1,19 +1,18 @@
-/* eslint-disable prettier/prettier */
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, MaxLength, Min, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsString, Length, Min } from 'class-validator';
 
+export class UpdateProductDTO {
+  @IsNotEmpty()
+  @Length(10, 20)
+  name: string;
 
-export class UpdateProductDto {
-    @IsNotEmpty()
-    @MinLength(0)
-    @MaxLength(25)
-    name: string;
-    @Min(0)
-    @IsNumber()
-    price: number;
-    @Min(0)
-    @IsNumber()
-    count: number;
-  
-    @IsArray()
-    
+  @IsNotEmpty()
+  @IsInt()
+  @Min(0)
+  price: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }) => (Array.isArray(value) ? value.join(', ') : ''))
+  description: string;
 }

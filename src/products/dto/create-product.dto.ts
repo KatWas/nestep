@@ -1,21 +1,18 @@
 /* eslint-disable prettier/prettier */
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, MaxLength, Min, MinLength } from 'class-validator';
+import { IsInt, IsNotEmpty, Length, IsString, Min } from 'class-validator';
 
-
-export class CreateProductDto {
+export class CreateProductDTO {
   @IsNotEmpty()
-  @MinLength(0)
-  @MaxLength(25)
+  @IsString()
+  @Length(10, 30)
   name: string;
 
+  @IsNotEmpty()
+  @IsInt()
   @Min(0)
-  @IsNumber()
   price: number;
-  
-  @Min(0)
-  @IsNumber()
-  count: number;
 
-  @IsArray()
+  @IsNotEmpty()
+  @Length(10, 200)
+  description: string;
 }
- 

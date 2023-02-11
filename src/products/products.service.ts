@@ -9,6 +9,7 @@ export class ProductsService {
     return db.products;
   }
 }
+
 public getById(id: string): Product | null {
   return db.products.find((p) => p.id === id);
 };
