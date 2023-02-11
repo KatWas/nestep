@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { ExternalProductDto } from './dto/external-product.dto';
-import { CreateProductDto } from './dto/create-products.dto';
-import { ProductsDataService } from './products-data.service';
-import { Product } from './db/products.entity';
-import { dateToArray } from 'src/shared/helpers/date.helper';
-import { UpdateProductDto } from './dto/update-products.dto';
-import { RoleGuard } from 'src/shared/guards/role.guard';
 import {
   Controller,
   Get,
@@ -20,22 +13,14 @@ import {
   HttpCode,
   Put,
 } from '@nestjs/common';
-import { Query } from 'typeorm/driver/Query';
-import { ProductsQuery } from './queries/product-query.interface';
-import { QueryBuilder } from 'typeorm';
 
 @Controller('products')
 export class ProductsController {
   [x: string]: any;
-  constructor(private productService: ProductsDataService) {}
+  constructor(private productService: ProductsService) {}
 
   @Get()
-  async getAllProducts(): Promise<ExternalProductDto[]> {
-    return (await this.productService.getAllProducts()).map((i) =>
-      this.mapProductToExternal(i),
-    );
-    // return products.map((i) => this.mapProductToExternal(i));
-  }
+  
 
   @Get(':id')
   async getProductById(
@@ -68,18 +53,7 @@ export class ProductsController {
   async updateProduct(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() product: UpdateProductDto,
-  ): Promise<ExternalProductDto> {
-    return this.mapProductToExternal(
-      await this.productService.updateProduct(id, product),
-    );
-  }
+  );
 
-  mapProductToExternal(product: Product): ExternalProductDto {
-    return {
-      ...product,
-      createdAt: dateToArray(product.createdAt),
-      updatedAt: dateToArray(product.updatedAt),
-      tags: product.tags?.map((i) => i.name),
-    };
-  }
+  
 }
