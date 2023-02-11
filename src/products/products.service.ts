@@ -16,6 +16,13 @@ public getById(id: string): Product | null {
 public deleteById(id: Product['id']): void {
   db.products = db.products.filter((p) => p.id !== id);
 }
-
 return this.getProductById(id);
-  
+
+public updateById(id: Product['id'], productData: Omit<Product, 'id'>): void {
+  db.products = db.products.map((p) => {
+    if (p.id === id) {
+      return { ...p, ...productData };
+    }
+    return p;
+  });
+}
