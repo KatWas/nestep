@@ -2,6 +2,7 @@
 import { ProductsModule } from './products.module';
 import { ProductsService } from './products.service';
 import { UpdateProductDTO } from './dto/update-product.dto';
+import { CreateProductDTO } from './dto/create-product.dto';
 import {
   Controller,
   Get,
@@ -44,5 +45,9 @@ export class ProductsController {
     this.productsService.updateById(id, productData);
     return { success: true };
   }
+  @Post('/')
+  create(@Body() productData: CreateProductDTO) {
+    return this.productsService.create(productData);
+}
 
 }
