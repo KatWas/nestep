@@ -42,17 +42,18 @@ deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
   return { success: true };
 }
 @Put('/:id')
-update(
+  update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() productData: UpdateProductDTO,
   ) {
-  if (!this.productsService.getById(id))
-    throw new NotFoundException('Product not found');
+    if (!this.productsService.getById(id))
+      throw new NotFoundException('Product not found');
 
-  this.productsService.updateById(id, productData);
-  return { success: true };
+    this.productsService.updateById(id, productData);
+    return { success: true };
+  }
 }
 @Post('/')
-create(@Body() productData: Omit<Product, 'id'>) {
-  return this.productsService.create(productData);
+  create(@Body() productData: CreateProductDTO) {
+    return this.productsService.create(productData);
 }
