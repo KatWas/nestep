@@ -1,59 +1,63 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { ProductsModule } from './products.module';
+import { UpdateProductDTO } from './dtos/update-product.dto';
+import { Controller, Get } from '@nestjs/common';
+import { Body, Delete, Param, Post, Put } from '@nestjs/common/decorators';
 import { ProductsService } from './products.service';
-import { UpdateProductDTO } from './dto/update-product.dto';
-import { CreateProductDTO } from './dto/create-product.dto';
-import { ExternalProductDto } from './dto/external-product.dto';
-import {
-  Controller,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  NotFoundException,
-  Post,
-  Body,
-  Delete,
-  Put,
-} from '@nestjs/common';
+import { CreateProductDTO } from './dtos/create-product.dto';
+import { ParseUUIDPipe } from '@nestjs/common/pipes';
+import { NotFoundException } from '@nestjs/common/exceptions';
 
 @Controller('products')
-export class ProductsController { }
-constructor(private productsService: ProductsService) {
-  this.productsService = productsService;
-}
+export class ProductsController {
+  constructor(private productsService: ProductsService) {
+    this.productsService = productsService;
+  }
 
-@Get('/')
-getAll(): any {
-  return this.productsService.getAll();
-}
+  @Get('/')
+  getAll(): any {
+    return this.productsService.getAll();
+  }
 
-@Get('/:id')
-getById(@Param('id', new ParseUUIDPipe()) id: string) {
-  const prod = this.productsService.getById(id);
-  if (!prod) throw new NotFoundException('Product not found');
-  return prod;
-}
+  @Get('/:id')
+  async getById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const prod = await this.productsService.getById(id);
+    if (!prod) throw new NotFoundException('Product not found');
+    return prod;
+  }
 
-@Delete('/:id')
-deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
-  if (!this.productsService.getById(id))
-    throw new NotFoundException('Product not found');
-  this.productsService.deleteById(id);
-  return { success: true };
-}
-@Put('/:id')
-  update(
+  @Delete('/:id')
+  async deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
+    if (!(await this.productsService.getById(id)))
+      throw new NotFoundException('Product not found');
+    await this.productsService.deleteById(id);
+    return { success: true };
+  }
+
+  @Post('/')
+  public create(@Body() productData: CreateProductDTO) {
+    return this.productsService.create(productData);
+  }
+
+  @Put('/:id')
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() productData: UpdateProductDTO,
   ) {
-    if (!this.productsService.getById(id))
+    if (!(await this.productsService.getById(id)))
       throw new NotFoundException('Product not found');
 
-    this.productsService.updateById(id, productData);
+    await this.productsService.updateById(id, productData);
     return { success: true };
   }
-}
-@Post('/')
-  create(@Body() productData: CreateProductDTO) {
-    return this.productsService.create(productData);
+
+  @Get('/extended')
+  getAllExtended(): any {
+    return this.productsService.getAllExtended();
+  }
+
+  @Get('/extended/:id')
+  async getExtendedById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const prod = await this.productsService.getExtendedById(id);
+    if (!prod) throw new NotFoundException('Product not found');
+    return prod;
+  }
 }
