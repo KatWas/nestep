@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
+import { ProductsModule } from './products.module';
+import { ProductsService } from './products.service';
+import { UpdateProductDTO } from './dto/update-product.dto';
 import {
   Controller,
   Get,
@@ -15,7 +17,7 @@ import {
 @Controller('products')
 export class ProductsController {
   [x: string]: any;
-  constructor(private productService: ProductsService) { }
+  constructor(public productService: ProductsService) { }
 
   @Get('/:id')
   getById(@Param('id', new ParseUUIDPipe()) id: string) {
